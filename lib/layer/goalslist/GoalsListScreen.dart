@@ -24,8 +24,7 @@ class GoalsListState extends State<GoalsListScreen> implements GoalsListView {
 
   @override
   void initState() {
-    SchedulerBinding.instance
-        .addPostFrameCallback((_) {
+    SchedulerBinding.instance.addPostFrameCallback((_) {
       _presenter.loadGoals();
       _startTimeWatcher();
     });
@@ -37,6 +36,7 @@ class GoalsListState extends State<GoalsListScreen> implements GoalsListView {
     disposed = true;
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     _presenter.view = this;
@@ -52,26 +52,34 @@ class GoalsListState extends State<GoalsListScreen> implements GoalsListView {
       ),
       body: SafeArea(
         bottom: true,
-        child: ListView.builder(
-          padding: EdgeInsets.all(12),
-          itemCount: goalsList.length,
-          itemBuilder: (context, index) {
-            final item = goalsList[index];
-            return Card(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Flexible(child: Text(item.title)),
-                    SizedBox(width: 15),
-                    _buildExpireTimeText(item),
-                  ],
-                ),
-              ),
-            );
-          },
+        child: Stack(
+          children: <Widget>[
+            ListView.builder(
+              padding: EdgeInsets.all(12),
+              itemCount: goalsList.length,
+              itemBuilder: (context, index) {
+                final item = goalsList[index];
+                return Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Flexible(child: Text(item.title)),
+                        SizedBox(width: 15),
+                        _buildExpireTimeText(item),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+            Visibility(
+              child: Center(child: Text("List is empty")),
+              visible: goalsList.isEmpty,
+            ),
+          ],
         ),
       ),
     );
@@ -125,10 +133,8 @@ class GoalsListState extends State<GoalsListScreen> implements GoalsListView {
 
   void _startTimeWatcher() async {
     await Future.delayed(Duration(milliseconds: 50));
-    if (this.mounted)
-      setState(() {});
+    if (this.mounted) setState(() {});
 
-    if (!this.disposed)
-      _startTimeWatcher();
+    if (!this.disposed) _startTimeWatcher();
   }
 }
