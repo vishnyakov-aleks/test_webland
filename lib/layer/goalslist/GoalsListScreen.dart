@@ -133,7 +133,8 @@ class GoalsListState extends State<GoalsListScreen> implements GoalsListView {
 
   void _startTimeWatcher() async {
     await Future.delayed(Duration(milliseconds: 50));
-    if (this.mounted) setState(() {});
+    if (this.mounted && goalsList.any((it) => !it.dateExpired()))
+      setState(() {});
 
     if (!this.disposed) _startTimeWatcher();
   }
